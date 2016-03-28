@@ -1,10 +1,8 @@
-'use strict'
-
 /**
  *  Returns a copy of the string S with only its first character capitalized
  */
-exports.capitalize = function (str) {
-    return str.charAt(0).toUpperCase() + str.stringView(1)
+export function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
 
@@ -12,7 +10,7 @@ exports.capitalize = function (str) {
  * Returns string centered in a string of length width. Padding is done using the specified 
  * fill character (default is a space)
  */ 
-exports.center = function (str, width, fillchar) {
+export function center(str, width, fillchar) {
     fillchar = fillchar || ' '
     var padding = width - str.length
 
@@ -22,7 +20,6 @@ exports.center = function (str, width, fillchar) {
     var rightPadding = padding - leftPadding
 
     return _multiplyChar(fillchar, leftPadding) + str + _multiplyChar(fillchar, rightPadding)
-
 }
 
 
@@ -44,7 +41,7 @@ function _multiplyChar(char, count) {
  * Returns the number of non-overlapping occurrences of substring sub in
  * string S[start:end].
  */
-exports.count = function (str, sub, start, end) {
+export function count(str, sub, start, end) {
     if (sub.length === 0) { return str.length + 1 }
 
     start = _getDefault(start, 0)
@@ -72,10 +69,10 @@ function _getDefault(value, def, undefined) {
     return (value === undefined) ? def : value
 }
 
-exports.decode = function () { throw 'TODO' }
-exports.encode = function () { throw 'TODO' }
+export function decode() { throw 'TODO' }
+export function encode() { throw 'TODO' }
 
-exports.endswith = function (str, suffix, start, end) {
+export function endswith(str, suffix, start, end) {
     var strView = StringView.__new__(str, start, end)
     var suffixes = _isString(suffix) ? [suffix] : suffix
     var suffix
@@ -174,8 +171,6 @@ var StringView = {
         return stringView
     }
 }
-
-exports.StringView = StringView
 
 function _isString(obj) {
     return typeof obj === 'string'
