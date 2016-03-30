@@ -2,7 +2,6 @@
  *  Returns a copy of the string S with only its first character capitalized
  */
 export function capitalize(str) {
-    // TODO try to avoid slicing. Maybe a custom join function helps
     return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
@@ -12,36 +11,51 @@ export function capitalize(str) {
  * fill character (default is a space)
  */ 
 export function center(str, width, fillchar = ' ') {
+    if (fillchar.length !== 1) {
+        throw new TypeError('fillchar must be char, not string')
+    }
+
     const padding = width - str.length
 
-    if (padding <= 0) { return str }
+    if (padding <= 0) { 
+        return str 
+    }
 
     const leftPadding = Math.floor(padding / 2) // Safe. Can't be negative
     const rightPadding = padding - leftPadding
 
-    return _multiplyChar(fillchar, leftPadding) + str + _multiplyChar(fillchar, rightPadding)
+    return repeatString(fillchar, leftPadding) + str + repeatString(fillchar, rightPadding)
 }
 
+    
+function repeatString(str, count) {
+    // Based on russian peasant multiplication technique
+    let result = '' 
+    let remainder = count
+    let strBlock = str
 
-function _multiplyChar(char, count) {
-    // Use native, if possible
-    if (char.repeat) { return char.repeat(count) }
+    for (;;) {
+        if (remainder & 1) {
+            result += strBlock
+        }
 
-    let str = ''
+        if (!remainder) {
+            return result
+        }
 
-    // Ugly, but it seems to be the standard JS "join" method
-    for (let i = 0; i < count; i++) {
-        str += char
+        remainder >>>= 1
+
+        strBlock += strBlock
     }
-
-    return str
 }
 
 /**
  * Returns the number of non-overlapping occurrences of substring str[start:end].
  */
 export function count(str, sub, start = 0, end = str.length - 1) {
-    if (sub.length === 0) { return str.length + 1 }
+    if (sub.length === 0) { 
+        return str.length + 1 
+    }
 
     let count = 0
     let next
@@ -63,35 +77,49 @@ export function count(str, sub, start = 0, end = str.length - 1) {
 
 
 
-export function endswith(str, suffix, start, end) {
-    const strView = StringView.__new__(str, start, end)
+export function endsWith(str, suffix, start = 0, end = str.length) {
+    const strView = _stringView.create(str, start, end)
     const suffixes = _isString(suffix) ? [suffix] : suffix
+
     let thisSuffix
     let subView
 
     for (let i = 0; i < suffixes.length; i++) {
         thisSuffix = suffixes[i]
-        subView = strView.getSubview(-thisSuffix.length)
+        subView = strView.createSubview(-thisSuffix.length)
 
-        if (subView.equals(suffix)) { return true } 
+        if (subView.equals(suffix)) { 
+            return true 
+        } 
     }
 
     return false
 }
 
+export function startsWith(str, prefix, start = 0, end = str.length) {
+
+}
+
+
+
 
 /**
  * Prototype for python like memory view for strings. Useful to handle substrings in a memory efficient way
  */
-const StringView = {
-    equals: function (strViewOrStr) {
-        const strView = _isString(strViewOrStr) ? StringView.__new__(strViewOrStr) : strViewOrStr
-        
+export const _stringView = {
 
-        if (this.width != strView.width) { return false } 
+    equals(other) {
+        if (this.length != other.length) { 
+            return false 
+        } 
 
-        for (let i = 0; i < strView.width; i++) {
-            if (this.charAt(this.start + i) != strView.charAt(strView.start + i)) { 
+        const thisStart = this.start
+        const otherStart = other.start || 0 // If other is just a string, start from beginning
+
+        for (let i = 0; i < other.length; i++) {
+
+            // console.log(this.charAt(thisStart + i) + '-----' + other.charAt(otherStart + i))
+            if (this.charAt(thisStart + i) != other.charAt(otherStart + i)) { 
                 return false 
             }
         }
@@ -103,12 +131,14 @@ const StringView = {
      * Returns a new view of the underlying string, optionally using new offsets, relative to the 
      * existing ones
      */ 
-    getSubview: function (start = 0, end = 0) {
-        // TODO: this.end + .... is wrong
-        return StringView.__new__(this.str, this.start + start, this.end + end)
+    createSubview(start = 0, end = this.length) {
+        const absStart = this.start + this._normalizeSlicePosition(start, this.length)
+        const absEnd = this.start + this._normalizeSlicePosition(end, this.length)
+
+        return this.create(this.str, absStart, absEnd)
     },
 
-    toString: function () {
+    toString() {
         if (this.start === 0 && this.end === this.str.length) {
             return this.str
         }
@@ -116,10 +146,14 @@ const StringView = {
         return this.str.slice(this.start, this.end)
     },
 
+    valueOf() {
+        return this.toString()
+    },
+
     /**
      * Returns character at given position. It starts counting from beginning of view
      */
-    charAt: function (pos) {
+    charAt(pos) {
         return this.str.charAt(pos)
     },
 
@@ -142,18 +176,19 @@ const StringView = {
     /**
      * Creates and initializes stringView objects
      */
-    __new__: function (str, start = 0, end = str.length) {
-        const stringView = Object.create(StringView)
+    create(str, start = 0, end = str.length) {
+        const stringView = Object.create(this)
         
         stringView.str = str
-    
+
         stringView.start = this._normalizeSlicePosition(start, str.length)
         stringView.end = this._normalizeSlicePosition(end, str.length)
-        stringView.width = end - start
-    
+        stringView.length = end - start
+
         return stringView
-    }
+    },
 }
+
 
 function _isString(obj) {
     return typeof obj === 'string'
