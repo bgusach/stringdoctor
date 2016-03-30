@@ -1,0 +1,48 @@
+{
+  "extends": "eslint:recommended",
+
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true
+  },
+
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "arrowFunctions": true,
+      "binaryLiterals": true,
+      "blockBindings": true,
+      "classes": false,
+      "defaultParams": true,
+      "destructuring": true,
+      "forOf": true,
+      "generators": false,
+      "modules": true,
+      "objectLiteralComputedProperties": true,
+      "objectLiteralDuplicateProperties": true,
+      "objectLiteralShorthandMethods": true,
+      "objectLiteralShorthandProperties": true,
+      "octalLiterals": true,
+      "regexUFlag": true,
+      "regexYFlag": true,
+      "spread": true,
+      "superInFunctions": true,
+      "templateStrings": true,
+      "unicodeCodePointEscapes": true,
+      "globalReturn": true,
+      "jsx": false
+    }
+  },
+
+  "rules": {
+    "semi": [2, "never"],
+    "strict": 0, // required by `babel-eslint`
+    "indent": "error",
+    "no-var": 2,
+    "quotes": [2, "single"],
+    "space-infix-ops": "error",
+    "no-param-reassign": "error",
+    "camelcase": 2
+  }
+}
