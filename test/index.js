@@ -18,21 +18,10 @@ test('center', t => {
     t.end()
 })
 
-test('_stringView', t => {
-    const create = sd._stringView.create.bind(sd._stringView)
-
-    t.equal(create('hey there').toString(), 'hey there', 'Simple view works')
-    t.equal(create('hey there', 4).toString(), 'there', 'Slicing view works')
-    t.equal(create('hey there', 0, 3).toString(), 'hey', 'Slicing view works')
-    t.equal(create('hey there', -5, -2).toString(), 'the', 'Slicing with negative index works')
-
-    t.ok(create('hallo').equals('hallo'), 'Comparison to strings works')
-    t.ok(create('hallo').equals(create('hallo')), 'Comparison to other views works')
-    t.ok(create('hallo amigo', 0, 4).equals('hallo'), 'Comparison with slicing works')
-    t.end()
-})
-
 test('endsWith', t => {
     t.ok(sd.endsWith('hola', 'la'), 'Simple endsWith case works')
+    t.notOk(sd.endsWith('hola', 'xx'), 'Simple false case')
+    t.ok(sd.endsWith('hola', 'la', -3), 'Wrapping around works')
+    t.notOk(sd.endsWith('hola', 'la', -1), 'Simple endsWith case works')
     t.end()
 })

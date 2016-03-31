@@ -24,17 +24,17 @@ export function center(str, width, fillchar = ' ') {
     const leftPadding = Math.floor(padding / 2) // Safe. Can't be negative
     const rightPadding = padding - leftPadding
 
-    return repeatString(fillchar, leftPadding) + str + repeatString(fillchar, rightPadding)
+    return _repeatString(fillchar, leftPadding) + str + _repeatString(fillchar, rightPadding)
 }
 
     
-function repeatString(str, count) {
+export function _repeatString(str, count) {
     // Based on russian peasant multiplication technique
     let result = '' 
     let remainder = count
     let strBlock = str
 
-    for (;;) {
+    while (true) {
         if (remainder & 1) {
             result += strBlock
         }
@@ -76,19 +76,18 @@ export function count(str, sub, start = 0, end = str.length - 1) {
 }
 
 
-
 export function endsWith(str, suffix, start = 0, end = str.length) {
-    const strView = _stringView.create(str, start, end)
-    const suffixes = _isString(suffix) ? [suffix] : suffix
 
-    let thisSuffix
-    let subView
+    const suffixes = _isString(suffix) ? [suffix] : suffix
+    const startPos = str.length - suffix.length - normalizeSlicePosition(start, str.length)
+    const endPos = normalizeSlicePosition(end, str.length)
+    let foundPos
 
     for (let i = 0; i < suffixes.length; i++) {
-        thisSuffix = suffixes[i]
-        subView = strView.createSubview(-thisSuffix.length)
+        foundPos = str.indexOf(suffixes[i], startPos)
+        console.log(startPos + '...' + foundPos + '...' + suffix.length + '...' + endPos)
 
-        if (subView.equals(suffix)) { 
+        if (~foundPos && foundPos + suffix.length <= endPos) { 
             return true 
         } 
     }
@@ -96,99 +95,23 @@ export function endsWith(str, suffix, start = 0, end = str.length) {
     return false
 }
 
+
+
+function normalizeSlicePosition(pos, len) {
+    if (pos < 0) {
+        return Math.max(0, len + pos) 
+    }
+
+    if (pos === 0) {
+        return 0
+    }
+
+    return Math.min(pos, len)
+}
+
 export function startsWith(str, prefix, start = 0, end = str.length) {
 
 }
-
-
-
-
-/**
- * Prototype for python like memory view for strings. Useful to handle substrings in a memory efficient way
- */
-export const _stringView = {
-
-    equals(other) {
-        if (this.length != other.length) { 
-            return false 
-        } 
-
-        const thisStart = this.start
-        const otherStart = other.start || 0 // If other is just a string, start from beginning
-
-        for (let i = 0; i < other.length; i++) {
-
-            // console.log(this.charAt(thisStart + i) + '-----' + other.charAt(otherStart + i))
-            if (this.charAt(thisStart + i) != other.charAt(otherStart + i)) { 
-                return false 
-            }
-        }
-
-        return true
-    },
-
-    /**
-     * Returns a new view of the underlying string, optionally using new offsets, relative to the 
-     * existing ones
-     */ 
-    createSubview(start = 0, end = this.length) {
-        const absStart = this.start + this._normalizeSlicePosition(start, this.length)
-        const absEnd = this.start + this._normalizeSlicePosition(end, this.length)
-
-        return this.create(this.str, absStart, absEnd)
-    },
-
-    toString() {
-        if (this.start === 0 && this.end === this.str.length) {
-            return this.str
-        }
-
-        return this.str.slice(this.start, this.end)
-    },
-
-    valueOf() {
-        return this.toString()
-    },
-
-    /**
-     * Returns character at given position. It starts counting from beginning of view
-     */
-    charAt(pos) {
-        return this.str.charAt(pos)
-    },
-
-    /**
-     * Helper function to emulate python positions for enumerable slicings. Handles negative numbers and
-     * takes care of indices out of bounds
-     */
-    _normalizeSlicePosition: function (pos, len) {
-        if (pos < 0) {
-            return Math.max(0, len + pos) 
-        }
-
-        if (pos === 0) {
-            return 0
-        }
-
-        return Math.min(pos, len)
-    },
-
-    /**
-     * Creates and initializes stringView objects
-     */
-    create(str, start = 0, end = str.length) {
-        const stringView = Object.create(this)
-        
-        stringView.str = str
-
-        stringView.start = this._normalizeSlicePosition(start, str.length)
-        stringView.end = this._normalizeSlicePosition(end, str.length)
-        stringView.length = end - start
-
-        return stringView
-    },
-}
-
 
 function _isString(obj) {
     return typeof obj === 'string'
