@@ -76,34 +76,50 @@ export function count(str, sub, start = 0, end = str.length - 1) {
 }
 
 
-export function endsWith(str, suffix, start = 0, end = str.length) {
+export function endsWith(str, suffix, end = str.length) {
 
+    const endPos = _normalizePosition(end, str.length)
     const suffixes = _isString(suffix) ? [suffix] : suffix
-    const startPos = str.length - suffix.length - normalizeSlicePosition(start, str.length)
-    const endPos = normalizeSlicePosition(end, str.length)
-    let foundPos
+
+    let thisSuffix
+    let startCheckPos
 
     for (let i = 0; i < suffixes.length; i++) {
-        foundPos = str.indexOf(suffixes[i], startPos)
-        console.log(startPos + '...' + foundPos + '...' + suffix.length + '...' + endPos)
-
-        if (~foundPos && foundPos + suffix.length <= endPos) { 
-            return true 
-        } 
+        thisSuffix = suffixes[i]
+        startCheckPos = str.length - thisSuffix.length
+        console.log(thisSuffix, startCheckPos, endPos)
+        
+        if (_areStringsEqual({str1: str, start1: startCheckPos, end1: endPos, str2: thisSuffix})) {
+            return true
+        }
     }
 
     return false
 }
 
 
+export function _areStringsEqual({str1, start1 = 0, end1 = str1.length, str2, start2 = 0, end2 = str2.length}) {
+    // This function does work with negative offsets
+    const length = end1 - start1
 
-function normalizeSlicePosition(pos, len) {
-    if (pos < 0) {
-        return Math.max(0, len + pos) 
+    if (length !== end2 - start2) {
+        return false
     }
 
-    if (pos === 0) {
-        return 0
+    for (let i = 0; i < length; i++) {
+        if (str1.charAt(i + start1) !== str2.charAt(i + start2)) {
+            return false
+        }
+    }
+
+    return true
+}
+
+
+
+export function _normalizePosition(pos, len) {
+    if (pos < 0) {
+        return Math.max(0, len + pos) 
     }
 
     return Math.min(pos, len)
