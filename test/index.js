@@ -34,18 +34,22 @@ test('_areStringsEqual', t => {
 })
 
 test('_normalizePosition', t => {
-    t.equals(sd._normalizePosition(0, 10), 0)
-    t.equals(sd._normalizePosition(4, 10), 4)
-    t.equals(sd._normalizePosition(10, 10), 10)
-    t.equals(sd._normalizePosition(-1, 10), 9)
+    const np = sd._normalizePosition
+    t.equals(np(0, 10), 0, 'Value within bounds')
+    t.equals(np(4, 10), 4, 'Value within bounds')
+    t.equals(np(10, 10), 10, 'Value out of bounds')
+    t.equals(np(15, 10), 10, 'Value out of bounds')
+    t.equals(np(-1, 10), 9, 'Negative offset within bounds')
+    t.equals(np(-10, 10), 0, 'Negative offset within bounds')
     t.end()
 })
 
 test('endsWith', t => {
-    t.ok(sd.endsWith('hola', 'la'), 'Simple endsWith case works')
-    t.notOk(sd.endsWith('hola', 'xx'), 'Simple false case')
-    t.ok(sd.endsWith('hola', 'ho', 1), 'Passing string end')
-    t.ok(sd.endsWith('hola', 'la'), 'Wrapping around works')
-    t.notOk(sd.endsWith('hola', 'la', -1), 'Simple endsWith case works')
+    const ew = sd.endsWith
+
+    t.ok(ew('hola', 'la'), 'Simple endsWith case works')
+    t.notOk(ew('hola', 'xx'), 'Simple false case')
+    t.ok(ew('hola', 'ho', 2), 'Passing string end')
+    t.ok(ew('hola', 'ol', -1), 'Wrapping around works')
     t.end()
 })

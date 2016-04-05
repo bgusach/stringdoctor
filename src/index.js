@@ -34,45 +34,43 @@ export function _repeatString(str, count) {
     let remainder = count
     let strBlock = str
 
-    while (true) {
+    do {
         if (remainder & 1) {
             result += strBlock
-        }
-
-        if (!remainder) {
-            return result
         }
 
         remainder >>>= 1
 
         strBlock += strBlock
-    }
+
+    } while (remainder)
+
+    return result
 }
 
 /**
  * Returns the number of non-overlapping occurrences of substring str[start:end].
  */
-export function count(str, sub, start = 0, end = str.length - 1) {
-    if (sub.length === 0) { 
-        return str.length + 1 
+export function count(str, sub, start = 0, end = str.length) {
+    if (!sub.length) { 
+        return sub === '' ? 1 : 0
     }
 
     let count = 0
     let next
     let currentPos = start
 
-    for (let i = start; i <= end; i++) {
+    for (let i = start; i < end; i++) {
         next = str.indexOf(sub, currentPos)
 
         if (next === -1 || next >= end) {
-            break 
+            return count
         } 
             
         count++
         currentPos = next + 1
     }
 
-    return count
 }
 
 
@@ -86,8 +84,7 @@ export function endsWith(str, suffix, end = str.length) {
 
     for (let i = 0; i < suffixes.length; i++) {
         thisSuffix = suffixes[i]
-        startCheckPos = str.length - thisSuffix.length
-        console.log(thisSuffix, startCheckPos, endPos)
+        startCheckPos = endPos - thisSuffix.length
         
         if (_areStringsEqual({str1: str, start1: startCheckPos, end1: endPos, str2: thisSuffix})) {
             return true
@@ -125,9 +122,8 @@ export function _normalizePosition(pos, len) {
     return Math.min(pos, len)
 }
 
-export function startsWith(str, prefix, start = 0, end = str.length) {
-
-}
+//export function startsWith(str, prefix, start = 0, end = str.length) {
+//}
 
 function _isString(obj) {
     return typeof obj === 'string'
