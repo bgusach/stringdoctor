@@ -51,5 +51,7 @@ test('endsWith', t => {
     t.notOk(ew('hola', 'xx'), 'Simple false case')
     t.ok(ew('hola', 'ho', 2), 'Passing string end')
     t.ok(ew('hola', 'ol', -1), 'Wrapping around works')
+    t.ok(ew('hola', ['yo', 'ej', 'la']), 'Multiple suffixes can be passed')
+    t.ok(ew('hola', ['yo', 'ol'], -1), 'Multiple suffixes with offset work as well')
     t.end()
 })
