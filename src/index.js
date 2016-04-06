@@ -1,8 +1,40 @@
+export const asciiLowerCase = 'abcdefghijklmnopqrstuvwxyz'
+export const asciiUpperCase = asciiLowerCase.toUpperCase()
+export const asciiLetters = asciiLowerCase + asciiUpperCase
+export const digits = '0123456789'
+export const hexDigits = digits + 'abcdefABCDEF'
+export const octDigits = '01234567'
+
+// TODO: locale stuff
+
+
+
 /**
  *  Returns a copy of the string S with only its first character capitalized
  */
 export function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1)
+    return str.charAt(0).toLocaleUpperCase() + str.slice(1)
+}
+
+
+export function partition(str, sep) {
+    return _executePartition(str, sep, str.indexOf(sep), [str, '', ''])
+}
+
+
+export function _executePartition(str, sep, pos, onNotFound) {
+
+    if (pos === -1) {
+        return onNotFound
+    }
+
+    const endOfSep = pos + sep.length
+
+    return [str.slice(0, pos), str.slice(pos, endOfSep), str.slice(endOfSep)]
+}
+
+export function rightPartition(str, sep) {
+    return _executePartition(str, sep, str.lastIndexOf(sep), ['', '', str])
 }
 
 
@@ -34,18 +66,18 @@ export function _repeatString(str, count) {
     let remainder = count
     let strBlock = str
 
-    do {
+    for (;;) {
         if (remainder & 1) {
             result += strBlock
         }
 
+        if (!remainder) {
+            return result
+        }
+
         remainder >>>= 1
-
         strBlock += strBlock
-
-    } while (remainder)
-
-    return result
+    } 
 }
 
 /**
@@ -60,7 +92,7 @@ export function count(str, sub, start = 0, end = str.length) {
     let next
     let currentPos = start
 
-    for (let i = start; i < end; i++) {
+    for (;;) {
         next = str.indexOf(sub, currentPos)
 
         if (next === -1 || next >= end) {
@@ -70,7 +102,6 @@ export function count(str, sub, start = 0, end = str.length) {
         count++
         currentPos = next + 1
     }
-
 }
 
 
