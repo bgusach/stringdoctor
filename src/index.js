@@ -5,9 +5,6 @@ export const digits = '0123456789'
 export const hexDigits = digits + 'abcdefABCDEF'
 export const octDigits = '01234567'
 
-// TODO: locale stuff
-
-
 
 /**
  *  Returns a copy of the string S with only its first character capitalized
@@ -23,7 +20,6 @@ export function partition(str, sep) {
 
 
 export function _executePartition(str, sep, pos, onNotFound) {
-
     if (pos === -1) {
         return onNotFound
     }
@@ -56,11 +52,11 @@ export function center(str, width, fillchar = ' ') {
     const leftPadding = Math.floor(padding / 2) // Safe. Can't be negative
     const rightPadding = padding - leftPadding
 
-    return _repeatString(fillchar, leftPadding) + str + _repeatString(fillchar, rightPadding)
+    return repeat(fillchar, leftPadding) + str + repeat(fillchar, rightPadding)
 }
 
     
-export function _repeatString(str, count) {
+export function repeat(str, count) {
     // Based on russian peasant multiplication technique
     let result = '' 
     let remainder = count
@@ -104,6 +100,20 @@ export function count(str, sub, start = 0, end = str.length) {
     }
 }
 
+export function join(strArray, delimiter = '') {
+    if (!strArray.length) {
+        return ''
+    }
+
+    let res = strArray[0]
+
+    for (let i = 1; i < strArray.length; i++) {
+        res += delimiter + strArray[i]
+    }
+
+    return res
+}
+
 
 export function endsWith(str, suffix, end = str.length) {
 
@@ -125,9 +135,17 @@ export function endsWith(str, suffix, end = str.length) {
     return false
 }
 
+export function startsWith(str, preffix, start = 0) {
+    
+}
+
+
+export function contains(str, substr) {
+    return str.indexOf(substr) !== -1
+}
+
 
 export function _areStringsEqual({str1, start1 = 0, end1 = str1.length, str2, start2 = 0, end2 = str2.length}) {
-    // This function does work with negative offsets
     const length = end1 - start1
 
     if (length !== end2 - start2) {
@@ -144,7 +162,6 @@ export function _areStringsEqual({str1, start1 = 0, end1 = str1.length, str2, st
 }
 
 
-
 export function _normalizePosition(pos, len) {
     if (pos < 0) {
         return Math.max(0, len + pos) 
@@ -153,8 +170,6 @@ export function _normalizePosition(pos, len) {
     return Math.min(pos, len)
 }
 
-//export function startsWith(str, prefix, start = 0, end = str.length) {
-//}
 
 function _isString(obj) {
     return typeof obj === 'string'

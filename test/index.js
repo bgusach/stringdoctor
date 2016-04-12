@@ -92,3 +92,27 @@ test('rightPartition', t => {
     t.deepEqual(rp('hey amigo', '.'), ['', '', 'hey amigo'], 'On no separator, the whole string is returned on the last element')
     t.end()
 })
+
+test('contains', t => {
+    const c = sd.contains
+    t.ok(c('the brown fox', 'brown'), 'Positive case of contains')
+    t.notOk(c('the brown fox', 'cabra'), 'Negative case of contains')
+    t.end()
+})
+
+test('join', t => {
+    const j = sd.join
+    t.equal(j(['hel', 'lo']), 'hello', 'Basic joining works')
+    t.equal(j(['hello', 'amigo'], '---'), 'hello---amigo', 'Joining with delimiter')
+    t.equal(j(['h', 'e', 'l', 'l', 'o']), 'hello', 'Multiple join')
+    t.equal(j(['hello']), 'hello', 'Join with only one element')
+    t.equal(j([], '#'), '', 'Join with empty array returns empty string')
+    t.end()
+})
+
+test('repeat', t => {
+    const r = sd.repeat
+    t.equal(r('lol', 3), 'lollollol', 'Basic repeating')
+    t.equal(r('lol', 0), '', 'Zero repetitions')
+    t.end()
+})
